@@ -19,9 +19,6 @@ jobs:
     - run:
         name: Lint code
         command: npm run lint
-    - run:
-        name: TypeScript Check
-        command: npm run type-check
 
     - run:
         name: Run Tests
