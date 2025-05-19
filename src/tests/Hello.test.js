@@ -1,5 +1,5 @@
 // tests/Hello.test.js
-import { getHello, getSum } from '../app/Hello';
+import { getHello, getSum, getSub } from '../app/Hello';
 
 describe('Hello Next.js', () => {
   it('renders the correct text', () => {
@@ -19,4 +19,15 @@ describe('getSum', () => {
   it('Result of Sum(12,-10)', () => {
     expect(getSum(12, -10)).toBe(2);
   });
+});
+
+describe('getSub', () => {
+  it('Result of Sub(5,3)', () => {
+    expect(getSub(5, 3)).toBe(2);
+  });
+
+  it('Result of Sub(4,8)', () => {
+    expect(getSub(4, 8)).toBe(-4);
+  });
+
 });
