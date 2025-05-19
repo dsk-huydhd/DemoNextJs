@@ -23,6 +23,13 @@ jobs:
     - run:
         name: Run Tests
         command: npm test
+
+    - store_test_results:
+        path: test-results
+
+    - store_artifacts:
+        path: test-results
+        destination: test-report
     # - run:
     #     name: Build Next.js
     #     command: npm run build
