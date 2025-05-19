@@ -13,10 +13,22 @@ jobs:
     # Pull code from Github repo
     - checkout
 
+    # Restore from cache (if exist)
+    - restore_cache:
+        keys:
+          - node-modules-{{ checksum "package-lock.json" }}
+          - node-modules-
+
     # Install lib
     - run:
         name: Install Dependencies
         command: npm install
+    
+    # Save cache to next time
+    - save_cache:
+        keys: node-modules-{{ checksum "package-lock.json" }}
+        path:
+          - node_modules
 
     # Check error ESLint
     - run:
@@ -40,6 +52,7 @@ jobs:
     - store_artifacts:
         path: test-results
         destination: test-report
+        
     # - run:
     #     name: Build Next.js
     #     command: npm run build
