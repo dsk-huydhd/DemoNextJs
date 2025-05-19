@@ -30,4 +30,7 @@ describe('getSub', () => {
     expect(getSub(4, 8)).toBe(-4);
   });
 
+  it('Result of Sub(-4,4)', () => {
+    expect(getSub(-4, 4)).toBe(-8);
+  });
 });
