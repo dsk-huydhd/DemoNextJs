@@ -1,63 +1,63 @@
 version: 2.1
 
 executors:
-    node-executor:
-        docker:
-            - image: cimg/node:23.11.0
-        working_directory: ~/app
+  node-executor:
+    docker:
+      - image: cimg/node:23.11.0
+    working_directory: ~/app
 
 jobs:
-    build:
-        executor: node-executor
-        steps:
-            # Pull code from Github repo
-            - checkout
+  build:
+    executor: node-executor
+    steps:
+      # Pull code from Github repo
+      - checkout
 
-            # Restore from cache (if exist)
-            - restore_cache:
-                  keys:
-                      - node-modules-{{ checksum "package-lock.json" }}
-                      - node-modules-
+      # Restore from cache (if exist)
+      - restore_cache:
+          keys:
+            - node-modules-{{ checksum "package-lock.json" }}
+            - node-modules-
 
-            # Install lib
-            - run:
-                  name: Install Dependencies
-                  command: npm install
+      # Install lib
+      - run:
+          name: Install Dependencies
+          command: npm install
 
-            # Save cache to next time
-            - save_cache:
-                  key: node-modules-{{ checksum "package-lock.json" }}
-                  paths:
-                      - node_modules
+      # Save cache to next time
+      - save_cache:
+          key: node-modules-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
 
-            # Check error ESLint
-            - run:
-                  name: Lint code
-                  command: npm run lint
+      # Check error ESLint
+      - run:
+          name: Lint code
+          command: npm run lint
 
-            # Check code error format TypeScript
-            - run:
-                  name: Lint code
-                  command: npm run type-check
+      # Check code error format TypeScript
+      - run:
+          name: Lint code
+          command: npm run type-check
 
-            # Run test
-            - run:
-                  name: Run Tests
-                  command: npm test
+      # Run test
+      - run:
+          name: Run Tests
+          command: npm test
 
-            # Export report
-            - store_test_results:
-                  path: test-results
+      # Export report
+      - store_test_results:
+          path: test-results
 
-            - store_artifacts:
-                  path: test-results
-                  destination: test-report
+      - store_artifacts:
+          path: test-results
+          destination: test-report
 
-        # - run:
-        #     name: Build Next.js
-        #     command: npm run build
+    # - run:
+    #     name: Build Next.js
+    #     command: npm run build
 
 workflows:
-    build-and-test-for-Frontend:
-        jobs:
-            - build
+  build-and-test-for-Frontend:
+    jobs:
+      - build
