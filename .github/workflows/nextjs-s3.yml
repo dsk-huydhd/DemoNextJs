@@ -1,0 +1,38 @@
+name: Web DEV Workflow
+
+on:
+  push:
+    branches:
+      - copro-cps-cicd      # 開発ブランチ
+    paths:
+      - '**'
+#      - '.github/workflows/**'  # APIディレクトリ内の変更を検知
+
+jobs:
+  build:
+    # pull_request.merged は pull_request イベント専用。push イベントでは不要。
+    # if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print debug information
+        # 現在のディレクトリやファイル構成を確認する
+        run: |
+          echo "Current Directory:"
+          pwd
+          echo "Files in workspace:"
+          ls -al
+
+      - name: Deploy to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "Creating zip file"
+          zip -r Front.zip .
+          echo "Uploading to S3"
+          aws s3 cp Front.zip s3://copro-cps-bucket/Front.zip
+          echo "Upload complete"
