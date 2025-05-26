@@ -1,12 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-    SOURCE_ZIP: "Front.zip"                 # GitHubから取得したソースコードのZIPファイル名
-    SOURCE_DIR: "DemoNextJs"    # ZIP解凍後のソースコードディレクトリ名
-    DEPLOY_BUCKET: "copro-cps-bucket"      # 静的サイトをデプロイするS3バケット名
-    DEPLOY_PREFIX: ""                       # バケット内のサブディレクトリ（必要に応じて設定）
-
 phases:
   install:
     runtime-versions:
@@ -16,8 +9,8 @@ phases:
       - yum install -y unzip               # unzipコマンドのインストール
       - echo "ソースコードの解凍を開始します..."
       - ls -la                             # List all files to debug
-      - unzip $SOURCE_ZIP -d .             # ZIPファイルをカレントディレクトリに解凍
-      - cd $SOURCE_DIR                     # 解凍後のソースコードディレクトリに移動
+      - unzip Front.zip -d .             # ZIPファイルをカレントディレクトリに解凍
+      - cd DemoNextJs                     # 解凍後のソースコードディレクトリに移動
       - echo "依存パッケージのインストールを開始します..."
       - npm install                       # npmパッケージのインストール
 
@@ -32,7 +25,7 @@ phases:
     commands:
       - echo "ビルドとテストが完了しました。ビルド成果物を確認します..."
       - echo "S3へのデプロイを開始します..."
-      - aws s3 sync out/ s3://$DEPLOY_BUCKET/$DEPLOY_PREFIX --delete  # 静的ファイルをS3に同期
+      - aws s3 sync out/ s3://copro-cps-bucket/ --delete  # 静的ファイルをS3に同期
 #      - ls -R  # ルートディレクトリ内のファイルを再帰的に一覧表示（デバッグ用）
       - ls -R out/  # ビルド成果物ディレクトリ（out/）の内容を再帰的に表示
 
