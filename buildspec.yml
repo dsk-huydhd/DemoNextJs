@@ -15,6 +15,7 @@ phases:
       - echo "unzipのインストールを開始します..."
       - yum install -y unzip               # unzipコマンドのインストール
       - echo "ソースコードの解凍を開始します..."
+      - ls -la                             # List all files to debug
       - unzip $SOURCE_ZIP -d .             # ZIPファイルをカレントディレクトリに解凍
       - cd $SOURCE_DIR                     # 解凍後のソースコードディレクトリに移動
       - echo "依存パッケージのインストールを開始します..."
