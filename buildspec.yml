@@ -1,0 +1,49 @@
+version: 0.2
+
+env:
+  variables:
+    SOURCE_ZIP: "Front.zip"                 # GitHubから取得したソースコードのZIPファイル名
+    SOURCE_DIR: "copro-cps-web-develop"    # ZIP解凍後のソースコードディレクトリ名
+    DEPLOY_BUCKET: "copro-cps-bucket"      # 静的サイトをデプロイするS3バケット名
+    DEPLOY_PREFIX: ""                       # バケット内のサブディレクトリ（必要に応じて設定）
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "unzipのインストールを開始します..."
+      - yum install -y unzip               # unzipコマンドのインストール
+      - echo "ソースコードの解凍を開始します..."
+      - unzip $SOURCE_ZIP -d .             # ZIPファイルをカレントディレクトリに解凍
+      - cd $SOURCE_DIR                     # 解凍後のソースコードディレクトリに移動
+      - echo "依存パッケージのインストールを開始します..."
+      - npm install                       # npmパッケージのインストール
+
+  build:
+    commands:
+      - echo "ユニットテスト（カバレッジとJUnitレポート付き）を実行します..."
+      - npm run test -- --ci --coverage    # テストの実行（CIモード、カバレッジ収集）
+      - echo "ビルドを開始します..."
+      - npm run build                      # アプリケーションのビルドを実行
+
+  post_build:
+    commands:
+      - echo "ビルドとテストが完了しました。ビルド成果物を確認します..."
+      - echo "S3へのデプロイを開始します..."
+      - aws s3 sync out/ s3://$DEPLOY_BUCKET/$DEPLOY_PREFIX --delete  # 静的ファイルをS3に同期
+#      - ls -R  # ルートディレクトリ内のファイルを再帰的に一覧表示（デバッグ用）
+      - ls -R out/  # ビルド成果物ディレクトリ（out/）の内容を再帰的に表示
+
+artifacts:
+  files:
+    - "**/*"          # out/ディレクトリ内のすべてのファイルとフォルダを含む
+  base-directory: out  # artifactsとして保存するベースディレクトリを指定
+  discard-paths: no    # フォルダ構造を保持する設定
+
+reports:
+  jest-junit-report:
+    files:
+      - junit.xml      # JUnit形式のテスト結果ファイル
+    base-directory: test-results
+    file-format: JunitXml
