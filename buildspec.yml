@@ -5,21 +5,22 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "unzipのインストールを開始します..."
-      - yum install -y unzip               # unzipコマンドのインストール
-      - echo "ソースコードの解凍を開始します..."
+      # - echo "unzipのインストールを開始します..."
+      # - yum install -y unzip               # unzipコマンドのインストール
+      # - echo "ソースコードの解凍を開始します..."
+      - echo "ファイルリストアップ..."
       - ls -la                             # List all files to debug
-      - unzip Front.zip -d .             # ZIPファイルをカレントディレクトリに解凍
-      - cd DemoNextJs                     # 解凍後のソースコードディレクトリに移動
+      # - unzip Front.zip -d .             # ZIPファイルをカレントディレクトリに解凍
+      # - cd DemoNextJs                     # 解凍後のソースコードディレクトリに移動
       - echo "依存パッケージのインストールを開始します..."
       - npm install                       # npmパッケージのインストール
 
   build:
     commands:
-      - echo "ユニットテスト（カバレッジとJUnitレポート付き）を実行します..."
-      - npm run test -- --ci --coverage    # テストの実行（CIモード、カバレッジ収集）
       - echo "ビルドを開始します..."
       - npm run build                      # アプリケーションのビルドを実行
+      - echo "ユニットテスト（カバレッジとJUnitレポート付き）を実行します..."
+      - npm run test -- --ci --coverage    # テストの実行（CIモード、カバレッジ収集）
 
   post_build:
     commands:
