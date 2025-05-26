@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     SOURCE_ZIP: "Front.zip"                 # GitHubから取得したソースコードのZIPファイル名
-    SOURCE_DIR: "copro-cps-web-develop"    # ZIP解凍後のソースコードディレクトリ名
+    SOURCE_DIR: "DemoNextJs"    # ZIP解凍後のソースコードディレクトリ名
     DEPLOY_BUCKET: "copro-cps-bucket"      # 静的サイトをデプロイするS3バケット名
     DEPLOY_PREFIX: ""                       # バケット内のサブディレクトリ（必要に応じて設定）
 
