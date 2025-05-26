@@ -1,5 +1,7 @@
 version: 0.2
-
+env:
+  variables:
+    
 phases:
   install:
     runtime-versions:
@@ -24,11 +26,12 @@ phases:
 
   post_build:
     commands:
-      - echo "ビルドとテストが完了しました。ビルド成果物を確認します..."
-      - echo "S3へのデプロイを開始します..."
-      - aws s3 sync out/ s3://copro-cps-bucket/ --delete  # 静的ファイルをS3に同期
-#      - ls -R  # ルートディレクトリ内のファイルを再帰的に一覧表示（デバッグ用）
-      - ls -R out/  # ビルド成果物ディレクトリ（out/）の内容を再帰的に表示
+        - echo "ビルドとテストが完了しました。"
+      # - echo "ビルドとテストが完了しました。ビルド成果物を確認します..."
+#       - echo "S3へのデプロイを開始します..."
+#       - aws s3 sync out/ s3://copro-cps-bucket/ --delete  # 静的ファイルをS3に同期
+# #      - ls -R  # ルートディレクトリ内のファイルを再帰的に一覧表示（デバッグ用）
+#       - ls -R out/  # ビルド成果物ディレクトリ（out/）の内容を再帰的に表示
 
 artifacts:
   files:
