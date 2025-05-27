@@ -37,5 +37,5 @@ jobs:
           echo "Creating zip file"
           zip -r Front.zip .
           echo "Uploading to S3"
-          aws s3 cp Front.zip s3://copro-cps-bucket/Front.zip
+          aws s3 cp Front.zip s3://demo-nextjs-s3/Front.zip
           echo "Upload complete"
