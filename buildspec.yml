@@ -5,31 +5,42 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      # - echo "unzipのインストールを開始します..."
-      # - yum install -y unzip               # unzipコマンドのインストール
-      # - echo "ソースコードの解凍を開始します..."
+      # AWS ECRログイン
+      - echo Logging in to Amazon ECR....
+      - aws --version
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+      # List all files to debug
       - echo "ファイルリストアップ..."
-      - ls -la                             # List all files to debug
-      # - unzip Front.zip -d .             # ZIPファイルをカレントディレクトリに解凍
-      # - cd DemoNextJs                     # 解凍後のソースコードディレクトリに移動
+      - ls -la
+      # npmパッケージのインストール
       - echo "依存パッケージのインストールを開始します..."
-      - npm install                       # npmパッケージのインストール
+      - npm install
+      # イメージ情報
+      - echo "イメージ情報宣言..."
+      - IMAGE_REPO_WEB=demo/demo-nextjs
+      - REPOSITORY_URI=public.ecr.aws/n5r1w0t7/demo/demo-nextjs
+      - IMAGE_URI_WEB=$REPOSITORY_URI/$IMAGE_REPO_WEB
+      - IMAGE_TAG=$(echo $CODEBUILD_BUILD_ID | md5sum | cut -d' ' -f1)
 
   build:
     commands:
+      # アプリケーションのビルドを実行
       - echo "ビルドを開始します..."
-      - npm run build                      # アプリケーションのビルドを実行
+      - npm run build
+      # テストの実行（CIモード、カバレッジ収集）
       - echo "ユニットテスト（カバレッジとJUnitレポート付き）を実行します..."
-      - npm run test -- --ci --coverage    # テストの実行（CIモード、カバレッジ収集）
+      - npm run test -- --ci --coverage
+      # イメージ作成
+      - echo "Dockerイメージビルド..."
+      - docker build --platform linux/amd64 -t $IMAGE_REPO_WEB:latest . --no-cache
+      - docker tag $IMAGE_REPO_WEB:latest $IMAGE_URI_WEB:$IMAGE_TAG
 
   post_build:
     commands:
-        - echo "ビルドとテストが完了しました。"
-      # - echo "ビルドとテストが完了しました。ビルド成果物を確認します..."
-#       - echo "S3へのデプロイを開始します..."
-#       - aws s3 sync out/ s3://copro-cps-bucket/ --delete  # 静的ファイルをS3に同期
-# #      - ls -R  # ルートディレクトリ内のファイルを再帰的に一覧表示（デバッグ用）
-#       - ls -R out/  # ビルド成果物ディレクトリ（out/）の内容を再帰的に表示
+        # ECRへイメージプッシュ
+        - echo "Pushing the Docker image..."
+        - docker image ls -a
+        - docker push $IMAGE_URI_WEB:$IMAGE_TAG
 
 artifacts:
   files:
